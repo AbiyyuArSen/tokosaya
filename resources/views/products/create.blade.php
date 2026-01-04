@@ -25,8 +25,30 @@
         {{-- Harga Produk --}}
         <div>
             <label for="price">Harga Produk</label>
-            <input type="number" id="price" name="price" value="{{ old('price') }}" placeholder="Harga Produk" required>
+            <input type="text" id="price" name="price" value="{{ old('price') }}" placeholder="Harga Produk" inputmode="decimal" pattern="[0-9.,]*" required>
         </div>
+
+        {{-- Normalisasi client-side agar koma menjadi titik dan hapus pemisah ribuan saat submit --}}
+        <script>
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const p = document.getElementById('price');
+                if (p && p.value) {
+                    // Hapus spasi
+                    let v = p.value.replace(/\s+/g, '');
+                    // Jika format ID (1.234,56), ubah menjadi 1234.56
+                    if (v.indexOf(',') !== -1 && v.indexOf('.') !== -1) {
+                        v = v.replace(/\./g, '');
+                        v = v.replace(/,/g, '.');
+                    } else if (v.indexOf(',') !== -1) {
+                        // Jika hanya koma, treat as decimal separator
+                        v = v.replace(/,/g, '.');
+                    }
+                    // Hapus karakter selain angka, titik, minus
+                    v = v.replace(/[^0-9.\-]/g, '');
+                    p.value = v;
+                }
+            });
+        </script>
 
         {{-- Deskripsi --}}
         <div>

@@ -24,7 +24,24 @@
         <input type="text" name="name" value="{{ old('name', $product->name) }}" required placeholder="Nama Produk">
 
         <label>Harga (IDR)</label>
-        <input type="number" name="price" value="{{ old('price', $product->price) }}" required placeholder="Harga Produk">
+        <input type="text" id="price" name="price" value="{{ old('price', $product->price) }}" required placeholder="Harga Produk" inputmode="decimal" pattern="[0-9.,]*">
+
+        <script>
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const p = document.getElementById('price');
+                if (p && p.value) {
+                    let v = p.value.replace(/\s+/g, '');
+                    if (v.indexOf(',') !== -1 && v.indexOf('.') !== -1) {
+                        v = v.replace(/\./g, '');
+                        v = v.replace(/,/g, '.');
+                    } else if (v.indexOf(',') !== -1) {
+                        v = v.replace(/,/g, '.');
+                    }
+                    v = v.replace(/[^0-9.\-]/g, '');
+                    p.value = v;
+                }
+            });
+        </script>
 
         <label>Deskripsi</label>
         <textarea name="description" rows="5" placeholder="Deskripsi produk">{{ old('description', $product->description) }}</textarea>
